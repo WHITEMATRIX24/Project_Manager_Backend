@@ -68,7 +68,7 @@ const taskSchema = new mongoose.Schema(
       required: true,
     },
     task_closure_time: {
-      type: String,
+      type: Date,
     },
     task_closure_comment: {
       type: String,
