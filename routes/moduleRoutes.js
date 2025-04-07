@@ -1,10 +1,10 @@
 const express = require('express');
+const { getModuleController, getModuleTreeController, addModuleController, editModuleController, deleteModuleController } = require('../controllers/module');
 const router = express.Router();
-const Module = require('../models/module');
 
-router.get('/', async (req, res) => {
-    const modules = await Module.find();
-    res.json(modules);
-});
-
+router.get("/", getModuleController);
+router.get("/tree", getModuleTreeController);
+router.post("/add", addModuleController);
+router.put("/update/:moduleId", editModuleController);
+router.delete("/delete/:moduleId", deleteModuleController);
 module.exports = router;

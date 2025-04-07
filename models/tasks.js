@@ -61,7 +61,7 @@ const taskSchema = new mongoose.Schema(
     },
     parent_module_id: {
       type: mongoose.Schema.Types.ObjectId,
-      ref: "modules",
+      ref: "Module",
     },
     is_active: {
       type: Boolean,
