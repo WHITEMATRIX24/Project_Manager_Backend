@@ -1,12 +1,8 @@
-const express = require('express');
+const express = require("express");
 const router = express.Router();
-const Comment = require('../models/comment');
-
+const { getCommentsController } = require("../controllers/comments");
 
 // Get all comments
-router.get('/', async (req, res) => {
-    const comments = await Comment.find();
-    res.json(comments);
-});
+router.get("/", getCommentsController);
 
 module.exports = router;
