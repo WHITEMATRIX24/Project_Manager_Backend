@@ -2,6 +2,7 @@ const mongoose = require("mongoose");
 const UserModel = require("../models/users");
 const { hashPassword, comparePassword } = require("../utils/hash_password");
 const { generateAccessToken } = require("../utils/tokenization");
+const TenetModel = require("../models/tenet");
 
 const registerController = async (req, res) => {
   try {
@@ -65,6 +66,19 @@ const loginController = async (req, res) => {
 
     delete user.password;
 
+    // tenet data
+    const tenetData = await TenetModel.find(
+      {
+        users: user._id,
+      },
+      {
+        company_name: 1,
+        industry: 1,
+        contact_info: 1,
+        hq_address: 1,
+      }
+    );
+
     res.status(200).json({
       message: "sucess",
       data: {
@@ -73,6 +87,7 @@ const loginController = async (req, res) => {
           ...user.toObject(),
           password: undefined,
         },
+        tenet_data: tenetData,
       },
     });
   } catch (error) {

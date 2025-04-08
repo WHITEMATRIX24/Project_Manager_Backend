@@ -36,14 +36,16 @@ const tenetSchema = new mongoose.Schema(
     created_by: {
       type: mongoose.Schema.Types.ObjectId,
       ref: "users",
+      required: true,
     },
     subscription: {
       type: mongoose.Schema.Types.ObjectId,
       ref: "subscriptions",
+      required: true,
     },
     users: [
       {
-        types: mongoose.Schema.Types.ObjectId,
+        type: mongoose.Schema.Types.ObjectId,
         ref: "users",
       },
     ],
@@ -57,5 +59,5 @@ const tenetSchema = new mongoose.Schema(
   { timestamps: true }
 );
 
-const TenetModel = mongoose.model("tenet", tenetSchema);
+const TenetModel = mongoose.model("tenets", tenetSchema);
 module.exports = TenetModel;
