@@ -1,14 +1,26 @@
 const mongoose = require('mongoose');
 
-const commentSchema = new mongoose.Schema({
-    id: String,
-    comment: String,
+const messageSchema = new mongoose.Schema({
+    message: {
+        type: String,
+        required: true,
+    },
     commented_by: {
         type: mongoose.Schema.Types.ObjectId,
-        ref: 'User'
+        ref: 'users',
+        required: true,
     },
-    updated_at: Date,
-    deleted_at: Date
+    updated_at: {
+        type: Date,
+        default: Date.now,
+    },
+    deleted_at: {
+        type: Date,
+    }
 });
 
-module.exports = mongoose.model('Comment', commentSchema);
+const commentSchema = new mongoose.Schema({
+    messages: [messageSchema],
+}, { timestamps: true });
+
+module.exports = mongoose.model('comments', commentSchema);

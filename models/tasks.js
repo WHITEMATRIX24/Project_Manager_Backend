@@ -44,12 +44,11 @@ const taskSchema = new mongoose.Schema(
         type: String,
       },
     ],
-    comments: [
-      {
-        type: mongoose.Schema.Types.ObjectId,
-        ref: "comments",
-      },
-    ],
+    comments:
+    {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "comments",
+    },
     priority: {
       type: String,
       enum: ["low", "medium", "high"],

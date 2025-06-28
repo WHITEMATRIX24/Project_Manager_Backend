@@ -14,14 +14,57 @@ const getModuleController = async (req, res) => {
     }
 };
 //function to build tree structure of module and task
-const buildModuleTree = async (parentId = null) => {
+// const buildModuleTree = async (parentId = null) => {
 
-    const modules = await Module.find({ parent_module_id: parentId }).lean();
+//     const modules = await Module.find({ parent_module_id: parentId }).lean();
+//     const moduleTree = await Promise.all(modules.map(async (mod) => {
+//         const children = await buildModuleTree(mod._id);
+//         let tasks = [];
+//         if (mod.is_leaf_node) {
+//             tasks = await Task.find({ parent_module_id: mod._id })
+//                 .select('name description state priority due_date')
+//                 .populate('assignee', 'name')
+//                 .populate('assigned_to', 'name')
+//                 .lean();
+//         }
+
+//         return {
+//             ...mod,
+//             children,
+//             ...(mod.is_leaf_node ? { tasks } : {})
+//         };
+//     }));
+
+//     return moduleTree;
+// };
+//get all modules and task in tree structure
+// const getModuleTreeController = async (req, res) => {
+//     try {
+//         const moduleTree = await buildModuleTree(null);
+//         res.status(200).json(moduleTree);
+//     } catch (error) {
+//         console.error("Error building module tree:", error);
+//         res.status(500).json({ message: "Internal server error", error: error.message });
+//     }
+// };
+
+
+// Recursive function that optionally filters by projectId
+const buildModuleTree = async (projectId = null, parentId = null) => {
+    const moduleFilter = { parent_module_id: parentId };
+    if (projectId) moduleFilter.project_id = projectId;
+
+    const modules = await Module.find(moduleFilter).lean();
+
     const moduleTree = await Promise.all(modules.map(async (mod) => {
-        const children = await buildModuleTree(mod._id);
+        const children = await buildModuleTree(projectId, mod._id);
+
         let tasks = [];
         if (mod.is_leaf_node) {
-            tasks = await Task.find({ parent_module_id: mod._id })
+            const taskFilter = { parent_module_id: mod._id };
+            if (projectId) taskFilter.project_id = projectId;
+
+            tasks = await Task.find(taskFilter)
                 .select('name description state priority due_date')
                 .populate('assignee', 'name')
                 .populate('assigned_to', 'name')
@@ -37,16 +80,20 @@ const buildModuleTree = async (parentId = null) => {
 
     return moduleTree;
 };
-//get all modules and task in tree structure
+
+// Controller
 const getModuleTreeController = async (req, res) => {
+    const { project_id } = req.query;
+
     try {
-        const moduleTree = await buildModuleTree(null);
+        const moduleTree = await buildModuleTree(project_id || null);
         res.status(200).json(moduleTree);
     } catch (error) {
         console.error("Error building module tree:", error);
         res.status(500).json({ message: "Internal server error", error: error.message });
     }
 };
+
 //create module 
 const addModuleController = async (req, res) => {
     try {
